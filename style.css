@@ -1,0 +1,132 @@
+body {
+    margin: 40px;
+    /* font family roboto slab */
+    font-family: 'Roboto Slab', serif !important;
+    background-color: #EADFD7 !important;
+}
+
+h1 {
+    font-size: 40pt;
+    font-weight: 700;
+    color: #222222;
+}
+
+h2 {
+    font-size: 30pt;
+    font-weight: 700;
+    color: #444;
+}
+
+h3 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #444;
+}
+
+h4 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #676767;
+}
+
+h5 {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #676767;
+}
+
+.center-div-h {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    color: #444;
+    grid-gap: 10px;
+    padding: 10px 20px 10px 20px;
+}
+
+.nav li.selected a {
+    color: #fff !important;
+}
+
+.nav li a {
+    color: #c9c9c9 !important;
+}
+
+.itm {
+    /* visible border */
+    border: 4px solid #444;
+    border-radius: 20px;
+    min-width: 230px;
+    padding: 20px;
+}
+
+/* brown nav bar */
+.navbar {
+    background-color: #543a23;
+    color: #fff;
+    padding: 20px;
+    color: 0;
+    margin-bottom: 20px;
+}
+
+.itm img {
+    /* black */
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid #444;
+    margin-bottom: 20px;
+}
+
+.itm_title {
+    /* black */
+    font-size: 18pt;
+}
+
+.itm_desc {
+    /* black */
+    font-size: 12pt;
+}
+
+.itm .btn {
+    /* black */
+    font-size: 12pt;
+    border: 4px solid #444 !important;
+    border-radius: 20px !important;
+}
+
+.itm-view {
+    background-color: #876445 !important;
+    width: 100% !important;
+}
+
+.itm-add {
+    background-color: rgb(0, 68, 255) !important;
+}
+
+.itm-btns .itm-view {
+    margin-right: 10px;
+    width: 100%;
+    /* display: flex; */
+    /* justify-content: space-between; */
+}
+
+.itm-btns {
+    /* align with the bottom of the box */
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    justify-content: flex-end;
+    /* display: flex; */
+    /* justify-content: space-between; */
+}
+
+.itm_price {
+    /* black */
+    font-size: 14pt;
+    text-align: right;
+}

@@ -5,8 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Shop Page</title>
     <!-- add google fonts roboto slab -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- add style.css -->
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-    <link rel="stylesheet" href="style.css">
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
@@ -34,34 +36,22 @@
         <h4>our products.</h4>
     </div>
     <div class="wrapper">
-        <div class="itm a">
-            <img src="pictures/espresso.jpg" alt="image" width=100%>
+        {% for item in items %}
+        <div class="itm">
+            <!-- url for static images item.image -->
+            <img src="{{ url_for('static',filename='images/' + item.image) }}" alt="image" width=100%>
             <div class="content">
-                <h3 class="itm_title">Espresso Blend</h3>
-                <p class="itm_desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
-                <p class="itm_price">£10.00</p>
+                <h3 class="itm_title">{{ item.name }}</h3>
+                <p class="itm_desc">{{ item.description }}</p>
+                <p class="itm_price">£{{ '%0.2f'|format(item.price|float) }}</p>
+                <p class="itm_price">{{ item.airmiles }}</p>
                 <div class="itm-btns">
-                    <a type="button" class="btn btn-primary itm-view" href="product.html">view</a>
+                    <a type="button" class="btn btn-primary itm-view" href="view?id={{ item.id }}">view</a>
                     <a type="button" class="btn btn-primary itm-add">add</a>
                 </div>
             </div>
         </div>
-        <div class="itm b">
-            <img src="pictures/french.jpg" alt="image" width=100%>
-            <div class="content">
-                <h3 class="itm_title">French Blend</h3>
-                <p class="itm_desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
-                <p class="itm_price">£8.00</p>
-                <div class="itm-btns">
-                    <a type="button" class="btn btn-primary itm-view">view</a>
-                    <a type="button" class="btn btn-primary itm-add">add</a>
-                </div>
-            </div>
-        </div>
-        <div class="itm c">C</div>
-        <div class="itm d">D</div>
-        <div class="itm e">E</div>
-        <div class="itm f">F</div>
+        {% endfor %}
     </div>
 </body>
 

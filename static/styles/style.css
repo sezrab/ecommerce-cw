@@ -108,10 +108,16 @@ img {
 
 .itm_title {
     font-size: 18pt;
+    height: 50pt;
 }
 
 .itm_desc {
     font-size: 12pt;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+            line-clamp: 3; 
+    -webkit-box-orient: vertical;
 }
 
 .btn {
@@ -138,10 +144,8 @@ img {
 
 .itm-btns {
     /* align with the bottom of the box */
-    display: flex;
     width: 100%;
-    align-items: flex-end;
-    justify-content: flex-end;
+    display: flex;
     /* display: flex; */
     /* justify-content: space-between; */
 }

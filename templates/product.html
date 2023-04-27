@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Item Page</title>
-    <link rel="stylesheet" href="style.css">
+     <!-- add google fonts roboto slab -->
+     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
+     rel="stylesheet">
+    <!-- add style.css -->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
 </head>
 
 <body>
@@ -30,16 +33,16 @@
         <div class="row">
             <div class="column">
                 <!-- product image -->
-                <img class="listing-img" src="pictures/espresso.jpg" alt="product image">
+                <img class="listing-img" src="{{ url_for('static',filename='images/' + item.image) }}" alt="product image">
             </div>
             <div class="column info">
                 <!-- title, price, buy, description -->
-                <h1>Espresso Blend</h1>
-                <h4>£10.00</h4>
+                <h1>{{ item.name }}</h1>
+                <h4>£{{ '%0.2f'|format(item.price|float) }}</h4>
                 <a type="button" class="btn btn-primary itm-add">add to basket</a>
             </div>
         </div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. </p>
+        <p>{{ item.description }}</p>
     </div>
 </body>
 

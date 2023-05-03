@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block basket_nav %}selected{% endblock %}
+{% block content %}
+<div class="center-div-h">
+    <h1>sepia coffee.</h1>
+    <h4>your basket.</h4>
+</div>
+<!-- create emtpy if else block-->
+{% if items %}
+
+<div class="basket">
+    <table class="table">
+        <tbody>
+            {% for item in items.keys() %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>£{{ '%0.2f'|format(item.price|float) }}</td>
+                <td>x {{ items[item] }}</td>
+                <td>
+                    <form action="remove" method="POST">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-primary itm-remove">remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <th>Total:</th>
+                <td>£{{ '%0.2f'|format(total|float) }}</td>
+                <td><a type="button" class="btn btn-primary itm-checkout">checkout</a></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+{% else %}
+<div class="center-div-h">
+    <h3>empty basket :(</h3>
+</div>
+{% endif %}
+{% endblock %}

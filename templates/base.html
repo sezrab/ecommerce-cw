@@ -1,0 +1,54 @@
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %}Home{% endblock %} - Sepia Coffee</title>
+
+    <!-- add google fonts roboto slab -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- add style.css -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/style.css') }}"
+    />
+    <!-- bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    {% endblock %}
+  </head>
+
+  <body>
+    <!-- nav bar brown -->
+    <nav class="navbar navbar-dark">
+      <a class="navbar-brand" href="{{ url_for('index') }}">s e p i a .</a>
+      <!-- inline list of links: home, about, basket using bootstrap css -->
+      <ul class="nav">
+        <li class="nav-item {% block shop_nav %}{% endblock %}">
+          <a class="nav-link" href="{{ url_for('index') }}">shop</a>
+        </li>
+        <li class="nav-item {% block about_nav %}{% endblock %}">
+          <a class="nav-link" href="{{ url_for('about') }}">about</a>
+        </li>
+        <li class="nav-item {% block basket_nav %}{% endblock %}">
+          <a class="nav-link" href="{{ url_for('basket') }}"
+            >basket{% if basket_count %} ({{ basket_count }}){% endif %}</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <div class="banner">
+      <img
+        src="{{ url_for('static', filename='images/house_banner.png') }}"
+        alt="Sepia Coffee Banner"
+      />
+    </div>
+    {% block content %} {% endblock %}
+  </body>
+</html>

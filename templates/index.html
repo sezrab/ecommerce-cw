@@ -1,58 +1,40 @@
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Shop Page</title>
-    <!-- add google fonts roboto slab -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <!-- add style.css -->
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-    <!-- bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-
-<body>
-    <!-- nav bar brown -->
-    <nav class="navbar navbar-dark">
-        <a class="navbar-brand" href="#">s e p i a .</a>
-        <!-- inline list of links: home, about, basket using bootstrap css -->
-        <ul class="nav">
-            <li class="nav-item selected">
-                <a class="nav-link active" href="#">shop</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">about</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">basket</a>
-            </li>
-        </ul>
-    </nav>
-    <!-- horizontally centered text bootstrap -->
-    <div class="center-div-h">
-        <h1>sepia coffee.</h1>
-        <h4>our products.</h4>
-    </div>
-    <div class="wrapper">
-        {% for item in items %}
-        <div class="itm">
-            <!-- url for static images item.image -->
-            <img src="{{ url_for('static',filename='images/' + item.image) }}" alt="image" width=100%>
-            <div class="content">
-                <h3 class="itm_title">{{ item.name }}</h3>
-                <p class="itm_desc">{{ item.description }}</p>
-                <p class="itm_price">£{{ '%0.2f'|format(item.price|float) }}</p>
-                <p class="itm_price">{{ item.airmiles }}</p>
-                <div class="itm-btns">
-                    <a type="button" class="btn btn-primary itm-view" href="view?id={{ item.id }}">view</a>
-                    <a type="button" class="btn btn-primary itm-add">add</a>
-                </div>
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block shop_nav %}selected{% endblock %}
+{% block content %}
+ <!-- horizontally centered text bootstrap -->
+ <div class="center-div-h">
+    <h1>sepia coffee.</h1>
+    <h4>our products.</h4>
+</div>
+<div class="wrapper">
+    {% for item in items %}
+    <div class="itm">
+        <!-- url for static images item.image -->
+        <img src="{{ url_for('static',filename='images/' + item.image) }}" alt="image" width=100%>
+        <div class="content">
+            <h3 class="itm_title">{{ item.name }}</h3>
+            <p class="itm_desc">{{ item.description }}</p>
+            <p class="itm_price">£{{ '%0.2f'|format(item.price|float) }}</p>
+            <p class="itm_price">{{ item.airmiles }} air miles</p>
+            <div class="itm-btns">
+                <form action="view" class="itm-view" method="GET">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                    <button type="submit" class="btn btn-primary itm-view">view</button>
+                </form>
+                <form action="add" method="POST">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                    <button type="submit" class="btn btn-primary itm-add">add</button>
+                </form>
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+<body>
+   
 </body>
 
 </html>

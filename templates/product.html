@@ -1,34 +1,7 @@
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Item Page</title>
-     <!-- add google fonts roboto slab -->
-     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap"
-     rel="stylesheet">
-    <!-- add style.css -->
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-    <!-- bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-
-<body>
-    <nav class="navbar navbar-dark">
-        <a class="navbar-brand" href="/">s e p i a .</a>
-        <!-- inline list of links: home, about, basket using bootstrap css -->
-        <ul class="nav">
-            <li class="nav-item selected">
-                <a class="nav-link active" href="#">shop</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">about</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">basket</a>
-            </li>
-        </ul>
-    </nav>
+{% extends 'base.html' %}
+{% block title %}View Product{% endblock %}
+{% block shop_nav %}selected{% endblock %}
+{% block content %}
     <div class="listing">
         <div class="row">
             <div class="column">
@@ -39,11 +12,12 @@
                 <!-- title, price, buy, description -->
                 <h1>{{ item.name }}</h1>
                 <h4>£{{ '%0.2f'|format(item.price|float) }}</h4>
-                <a type="button" class="btn btn-primary itm-add">add to basket</a>
+                <form action="add" method="POST">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                    <button type="submit" class="btn btn-primary itm-add">add to basket</button>
+                </form>
             </div>
         </div>
         <p>{{ item.description }}</p>
     </div>
-</body>
-
-</html>
+{% endblock %}

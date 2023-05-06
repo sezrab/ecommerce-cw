@@ -29,7 +29,7 @@
                 <td></td>
                 <th>Total:</th>
                 <td>£{{ '%0.2f'|format(total|float) }}</td>
-                <td><a type="button" class="btn btn-primary itm-checkout">checkout</a></td>
+                <td><a type="button" href="{{ url_for('checkout') }}", class="btn btn-primary itm-checkout">checkout</a></td>
             </tr>
         </tbody>
     </table>

@@ -1,9 +1,12 @@
-from flask import Flask, redirect, render_template, request, session, url_for
+from datetime import datetime
+from flask import Flask, redirect, render_template, request, send_file, session, url_for
+from utils import create_pdf_from_2d_list
 # flask bootstrap
+import time
 from flask_bootstrap import Bootstrap
 # flaskwtf form
-from flask_wtf import FlaskForm as Form
-from wtforms import StringField, SubmitField, DateField, IntegerField
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, DateField, IntegerField, ValidationError
 from wtforms.validators import Length, DataRequired, Email, Regexp
 from flask_sqlalchemy import SQLAlchemy
 
@@ -14,7 +17,17 @@ bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 
 
-class CheckoutForm(Form):
+class ExpiryDateValidator:
+    def __call__(self, form, field):
+        try:
+            expiry_date = datetime.strptime(field.data, '%m/%y')
+        except ValueError:
+            raise ValidationError(
+                'Invalid expiry date format. Please use MM/YY format.')
+        current_date = datetime.now()
+
+
+class CheckoutForm(FlaskForm):
     # 4)	Another page (checkout) should allow the user to enter their credit card payment details, and confirm the final price to be paid.
     # a)	As the user steps through the fields of the form, help messages must appear explaining what information needs to be entered in each field.
     # 5)	Do not implement an actual checkout or secure payment mechanism. Instead, implement a basic validation for the payment form to check that, when the form is submitted,
@@ -24,23 +37,35 @@ class CheckoutForm(Form):
     # If the submitted form validates correctly, present a page saying that checkout was successful. If there are errors in the form (e.g. the credit card number field contains other text) you may either prevent the form from submitting, or report an error after it submits.
 
     name = StringField('Name on Card', validators=[DataRequired(
-        message="This can't be empty")])
+        message="This can't be empty")], render_kw={"placeholder": "e.g. John Smith"})
     email = StringField('Email',
-                        validators=[
-                            DataRequired(message="This can't be empty"),
-                            Email(message='Invalid email address')]
+                        validators=[Email(message='Invalid email address'),
+                                    DataRequired(
+                                        message="This can't be empty")
+                                    ],
+                        render_kw={
+                            "placeholder": "e.g. johnsmith@gmail.com"}
                         )
     card = StringField('Card Number',
                        validators=[
                            DataRequired(message="This can't be empty"),
                            Length(min=16, max=16,
                                   message='Card number must be 16 digits long'),
-                           Regexp('^[0-9 -]*$', message='Card number must be numeric')]
+                           Regexp('^[0-9 -]*$', message='Card number must be numeric')],
+                       render_kw={"placeholder": "e.g. 1122334455667788"}
                        )
-    expiry = DateField('Expiry Date', format='%m/%y',
-                       validators=[DataRequired(message="This can't be empty")])
-    cvc = IntegerField('CVC', validators=[
-                       DataRequired(message="This can't be empty")])
+    expiry = StringField('Expiry Date (MM/YY)', validators=[DataRequired(message="This can't be empty"), Regexp(
+        r'^(0[1-9]|1[0-2])\/[0-9]{2}$', message='Invalid expiry date format. Please use MM/YY format.'),
+        # make sure expiry date is in the future
+        # make sure its a valid date
+
+    ],
+        render_kw={"placeholder": "e.g. 12/22"})
+    cvc = StringField('CVC', validators=[
+        DataRequired(message="This can't be empty"),
+        Regexp('^[0-9]*$', message='CVC must be numeric'),
+        Length(min=3, max=3, message='CVC must be 3 digits long')
+    ], render_kw={"placeholder": "e.g. 123"})
     submit = SubmitField('Submit')
 
 
@@ -83,10 +108,35 @@ def index():
     return render_template('index.html', items=Item.query.all(), basket_count=len(session.get('basket', [])))
 
 
+@ app.route('/suceess', methods=['GET'])
+def success():
+    return render_template('success.html')
+
+
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     items, total = getItemsFromBasket(session.get('basket', []))
-    return render_template('checkout.html', form=CheckoutForm(), items=items, total=total)
+    form = CheckoutForm()
+    if form.validate_on_submit():
+        # clear basket
+        session['receipt_basket'] = session['basket']
+        session['basket'] = []
+        return success()
+    return render_template('checkout.html', form=form, items=items, total=total)
+
+
+@app.route('/receipt', methods=['GET', 'POST'])
+def receipt():
+    items, total = getItemsFromBasket(session.get('receipt_basket', []))
+    table = [['Item', 'Quantity', 'Price (£)']]
+    for item in items:
+        table.append([item.name, items[item], '%.2f' %
+                     (item.price * items[item])])
+    table.append(['Total', '', '%.2f' % total])
+    rcpt_path = 'receipts/receipt-%i.pdf' % int(time.time())
+    create_pdf_from_2d_list(
+        table, rcpt_path)
+    return send_file(rcpt_path, as_attachment=True)
 
 
 @ app.route('/basket', methods=['GET'])

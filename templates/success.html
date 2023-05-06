@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block shop_nav
+%}selected{% endblock %} {% block content %}
+<!-- horizontal and vertically centered div with sucess.png, text saying "thank you for your purchase", and a print reciept button -->
+<div class="center-div-h">
+  <img
+    src="{{ url_for('static',filename='images/success.png') }}"
+    alt="image"
+    width="100%"
+  />
+  <h1>thank you for your purchase.</h1>
+  <form action="receipt" method="GET">
+    <button type="submit" class="btn btn-primary itm-view">
+      print receipt
+    </button>
+  </form>
+</div>
+{% endblock %}

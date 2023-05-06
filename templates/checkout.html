@@ -1,8 +1,9 @@
-{% import "bootstrap/wtf.html" as wtf %}
-{% extends 'base.html' %} {% block title %}Checkout{% endblock %}
-
-{% block shop_nav%}selected{% endblock %} {% block content %}
-
-{{ wtf.quick_form(form) }}
-
+{% import "bootstrap/wtf.html" as wtf %} {% extends 'base.html' %} {% block
+title %}Checkout{% endblock %} {% block shop_nav%}selected{% endblock %} {%
+block content %}
+<div class="center-div-h">
+  <h1>sepia coffee.</h1>
+  <h4>checkout.</h4>
+</div>
+<div class="center-div-h">{{ wtf.quick_form(form) }}</div>
 {% endblock %}

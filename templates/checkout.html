@@ -5,5 +5,57 @@ block content %}
   <h1>sepia coffee.</h1>
   <h4>checkout.</h4>
 </div>
-<div class="center-div-h">{{ wtf.quick_form(form) }}</div>
+<div class="center-div-h">
+  <form
+    method="post"
+    action="{{ url_for('checkout') }}"
+    autocomplete="off"
+    novalidate
+  >
+    {{ form.hidden_tag() }} {% for field in form %} {% if loop.revindex >= 3 %}
+    <div class="form-group">
+      <label for="{{ field.id }}">{{ field.label }}</label>
+      {{ field(class_="form-control", autocomplete="off") }}
+      <small class="form-text text-muted hint" id="hint-{{ field.id }}"></small>
+      {% if field.errors %} {% for error in field.errors %}
+      <p class="form-text text-danger hint">{{ error }}</p>
+      {% endfor %} {% endif %}
+    </div>
+    {% endif %} {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <script>
+      var hints = {
+        "{{ form.name.id }}": "Enter the name as it appears on the card.",
+        "{{ form.email.id }}":
+          "Enter your email address for order confirmation.",
+        "{{ form.card.id }}": "Enter your 16-digit card number.",
+        "{{ form.expiry.id }}":
+          "Enter the expiry date of your card in MM/YY format.",
+        "{{ form.cvc.id }}":
+          "Enter the 3-digit CVC code on the back of your card.",
+      };
+
+      function showHint(inputField) {
+        var hintElement = document.getElementById("hint-" + inputField.id);
+        hintElement.innerText = hints[inputField.id];
+      }
+
+      function hideHint(inputField) {
+        var hintElement = document.getElementById("hint-" + inputField.id);
+        hintElement.innerText = "";
+      }
+
+      var inputFields = document.querySelectorAll(".form-control");
+      inputFields.forEach(function (inputField) {
+        inputField.addEventListener("focus", function () {
+          showHint(inputField);
+        });
+        inputField.addEventListener("blur", function () {
+          hideHint(inputField);
+        });
+      });
+    </script>
+  </form>
+</div>
 {% endblock %}

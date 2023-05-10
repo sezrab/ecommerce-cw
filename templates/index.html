@@ -7,6 +7,15 @@
     <h1>sepia coffee.</h1>
     <h4>our products.</h4>
 </div>
+<form method="POST" class="sortby">
+    <label for="sort">Sort by:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+        <option value="alphabetically" {% if selected_option == 'alphabetically' %}selected{% endif %}>Name</option>
+        <option value="price_low_high" {% if selected_option == 'price_low_high' %}selected{% endif %}>Price (Low to High)</option>
+        <option value="price_high_low" {% if selected_option == 'price_high_low' %}selected{% endif %}>Price (High to Low)</option>
+        <option value="airmiles_low_high" {% if selected_option == 'airmiles_low_high' %}selected{% endif %}>Air Miles (Low to High)</option>
+    </select>
+</form>
 <div class="wrapper">
     {% for item in items %}
     <div class="itm">

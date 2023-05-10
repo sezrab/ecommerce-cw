@@ -103,12 +103,29 @@ def getItemsFromBasket(basket):
     return items, total
 
 
-@ app.route('/', methods=['GET'])
+def sort(method, products):
+    # Sort the products based on the selected option
+    if method == 'price_low_high':
+        sorted_products = sorted(products, key=lambda p: p.price)
+    elif method == 'price_high_low':
+        sorted_products = sorted(
+            products, key=lambda p: p.price, reverse=True)
+    elif method == 'airmiles_low_high':
+        sorted_products = sorted(products, key=lambda p: p.airmiles)
+    else:
+        sorted_products = sorted(products, key=lambda p: p.name)
+    return sorted_products
+
+
+@ app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html', items=Item.query.all(), basket_count=len(session.get('basket', [])))
+    # Retrieve the selected sorting option
+    selected_option = request.form.get('sort')
+    items_sorted = sort(selected_option, Item.query.all())
+    return render_template('index.html', items=items_sorted, selected_option=selected_option, basket_count=len(session.get('basket', [])))
 
 
-@ app.route('/suceess', methods=['GET'])
+@ app.route('/success', methods=['GET'])
 def success():
     return render_template('success.html')
 

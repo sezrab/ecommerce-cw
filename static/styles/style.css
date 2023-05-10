@@ -130,6 +130,14 @@ img {
   border-radius: 20px !important;
 }
 
+.sortby {
+  margin-bottom: 20px;
+  margin-left: 25px;
+  font-size: 12pt;
+  font-weight: 700;
+  color: #444;
+}
+
 .basket {
   background-color: transparent !important;
   /* 100px left and right margin. Centered. 100% width */
@@ -199,11 +207,13 @@ button.itm-view {
 
 .banner {
   float: right;
-  width: 200px;
+  width: 30%;
+  max-width: 200px;
+  margin-left: 30px;
 }
 
 .banner img {
   max-width: 100%;
-  margin-top: 125px;
+  margin-top: 250px;
   height: auto;
 }

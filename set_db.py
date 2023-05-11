@@ -91,10 +91,8 @@ def init_database():
         username='sepiaadmin', password='Roastery2023')
     db.session.add(admin_login)
     for item in items:
-        try:
-            db.session.add(item)
-        except Exception:
-            pass
+        db.session.add(item)
+
     db.session.commit()
 
 

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from shop import AdminLoginForm
-
+from shop import AdminLoginForm, Item
+from items import items
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'C1B6-1F3C-4F1A-8F9C'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shopdb.sqlite3'
@@ -27,13 +27,18 @@ class AdminLoginForm(db.Model):
 
 
 def init_database():
+    db.drop_all()
     # Create all tables
     db.create_all()
-
     # Add the initial admin login form to the database
     admin_login = AdminLoginForm(
         username='sepiaadmin', password='Roastery2023')
     db.session.add(admin_login)
+    for item in items:
+        # check if item already exists
+        item_exists = db.session.query(Item).filter_by(name=item.name).first()
+        if item_exists is None:
+            db.session.add(item)
     db.session.commit()
 
 

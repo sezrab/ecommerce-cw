@@ -25,7 +25,7 @@
             <h3 class="itm_title">{{ item.name }}</h3>
             <p class="itm_desc">{{ item.description }}</p>
             <p class="itm_price">£{{ '%0.2f'|format(item.price|float) }}</p>
-            <p class="itm_price">{{ item.airmiles }} air miles</p>
+            <p class="itm_price">{{ item.airmiles|int }} air miles</p>
             <div class="itm-btns">
                 <form action="view" class="itm-view" method="GET">
                     <input type="hidden" name="id" value="{{ item.id }}">

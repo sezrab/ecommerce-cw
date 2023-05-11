@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from flask import Flask, flash, redirect, render_template, request, send_file, session, url_for
 from utils import create_pdf_from_2d_list
 # flask bootstrap
@@ -6,8 +7,8 @@ import time
 from flask_bootstrap import Bootstrap
 # flaskwtf form
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, IntegerField, ValidationError
-from wtforms.validators import Length, DataRequired, Email, Regexp
+from wtforms import StringField, SubmitField, FloatField, ValidationError, FileField, IntegerField
+from wtforms.validators import Length, DataRequired, Email, Regexp, NumberRange
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -59,14 +60,6 @@ class AdminLoginForm(FlaskForm):
 
 
 class CheckoutForm(FlaskForm):
-    # 4)	Another page (checkout) should allow the user to enter their credit card payment details, and confirm the final price to be paid.
-    # a)	As the user steps through the fields of the form, help messages must appear explaining what information needs to be entered in each field.
-    # 5)	Do not implement an actual checkout or secure payment mechanism. Instead, implement a basic validation for the payment form to check that, when the form is submitted,
-    # a)	the entered credit card number is a 16 digit number (you may permit dashes and spaces),
-    # b)	that none of the other required fields are empty,
-    # c)	plus any other validation checks you think necessary.
-    # If the submitted form validates correctly, present a page saying that checkout was successful. If there are errors in the form (e.g. the credit card number field contains other text) you may either prevent the form from submitting, or report an error after it submits.
-
     name = StringField('Name on Card', validators=[DataRequired(
         message="This can't be empty")], render_kw={"placeholder": "e.g. John Smith"})
     email = StringField('Email',
@@ -87,8 +80,7 @@ class CheckoutForm(FlaskForm):
                        )
     expiry = StringField('Expiry Date (MM/YY)', validators=[DataRequired(message="This can't be empty"), Regexp(
         r'^(0[1-9]|1[0-2])\/[0-9]{2}$', message='Invalid expiry date format. Please use MM/YY format.'),
-        # make sure expiry date is in the future
-        # make sure its a valid date
+
 
     ],
         render_kw={"placeholder": "e.g. 12/22"})
@@ -103,9 +95,12 @@ class CheckoutForm(FlaskForm):
 class ItemForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    image = StringField('Image', validators=[DataRequired()])
-    price = IntegerField('Price', validators=[DataRequired()])
-    airmiles = IntegerField('Airmiles', validators=[DataRequired()])
+    # file upload
+    image = FileField('Image', validators=[DataRequired()])
+    price = FloatField('Price', validators=[
+                       DataRequired(), NumberRange(min=0), Regexp('^[0-9]*$', message='Price must be numeric')])
+    airmiles = IntegerField('Airmiles', validators=[
+        DataRequired(), NumberRange(min=0), Regexp('^[0-9]*$', message='Airmiles must be numeric')])
     submit = SubmitField('Submit')
 
 
@@ -121,7 +116,7 @@ class Item(db.Model):
     description = db.Column(db.String(1024), nullable=False)
     image = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    airmiles = db.Column(db.Float, nullable=False)
+    airmiles = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<Item {0}>'.format(self.name)
@@ -167,7 +162,14 @@ def index():
 
 def authenticate(username, password):
     admin = Admin.query.filter_by(username=username).first()
-    return (admin and admin.password == password)
+    if not admin:
+        return False
+    return admin.password == password
+
+
+def delitem(item):
+    db.session.delete(item)
+    db.session.commit()
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -195,11 +197,16 @@ def admin_dashboard():
         return redirect(url_for('admin'))
     form = ItemForm()
     if form.validate_on_submit():
+        image = form.image.data
+        filename = str(time.time())+"_"+image.filename
+        # save to static\images
+        image.save(os.path.join('static/images', filename))
         item = Item(name=form.name.data, description=form.description.data,
-                    image=form.image.data, price=form.price.data, airmiles=form.airmiles.data)
+                    image=filename, price=form.price.data, airmiles=form.airmiles.data)
         db.session.add(item)
         db.session.commit()
         flash('Item added successfully')
+        return redirect(url_for('admin_dashboard'))
     return render_template('admin_dashboard.html', form=form)
 
 
@@ -272,10 +279,23 @@ def about():
     return render_template('about.html', basket_count=len(session.get('basket', [])))
 
 
+@ app.route('/delete', methods=['POST'])
+def delete():
+    if authenticate(session.get('username', ''), session.get('password', '')):
+        try:
+            itmid = request.form.get('id')
+            # get item with id
+            item = Item.query.get(itmid)
+            delitem(item)
+        except:
+            pass
+    return redirect(url_for('index'))
+
+
 @ app.route('/view', methods=['GET'])
 def view():
     itemid = request.args.get('id')
-    return render_template('product.html', item=Item.query.get(itemid), basket_count=len(session.get('basket', [])))
+    return render_template('product.html', item=Item.query.get(itemid), basket_count=len(session.get('basket', [])), admin=authenticate(session.get('username', ''), session.get('password', '')))
 
 
 if __name__ == '__main__':

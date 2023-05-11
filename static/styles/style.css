@@ -77,7 +77,9 @@ h5 {
 }
 
 .itm img {
+  object-fit: cover;
   width: 100%;
+  height: 250px;
 }
 
 .listing {
@@ -119,7 +121,8 @@ img {
   font-size: 12pt;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* number of lines to show */
+  -webkit-line-clamp: 3;
+  /* number of lines to show */
   line-clamp: 3;
   -webkit-box-orient: vertical;
 }
@@ -180,7 +183,7 @@ button.itm-view {
   background-color: rgb(61, 108, 236) !important;
 }
 
-.itm-btns > .itm-view {
+.itm-btns>.itm-view {
   margin-right: 10px;
   width: 100%;
   /* display: flex; */
@@ -217,6 +220,7 @@ button.itm-view {
   margin-top: 250px;
   height: auto;
 }
+
 .help-block {
   color: rgb(169, 54, 54);
 }

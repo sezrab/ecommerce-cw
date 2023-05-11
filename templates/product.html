@@ -12,10 +12,19 @@
                 <!-- title, price, buy, description -->
                 <h1>{{ item.name }}</h1>
                 <h4>£{{ '%0.2f'|format(item.price|float) }}</h4>
+                <ul>
                 <form action="add" method="POST">
                     <input type="hidden" name="id" value="{{ item.id }}">
                     <button type="submit" class="btn btn-primary itm-add">add to basket</button>
                 </form>
+                {% if admin == True %}
+                <form action="delete" method="POST">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                    <button type="submit" class="btn btn-primary itm-remove">delete listing</button>
+                </form>
+                {% endif %}
+                </ul>
+                
             </div>
         </div>
         <p>{{ item.description }}</p>

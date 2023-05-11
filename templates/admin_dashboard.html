@@ -1,0 +1,9 @@
+{% import "bootstrap/wtf.html" as wtf %} {% extends 'base.html' %} {% block
+title %}Admin Panel{% endblock %} {% block content %}
+<div class="center-div-h">
+  <h1>sepia coffee.</h1>
+  <h4>admin panel.</h4>
+  {{ wtf.quick_form(form) }}
+</div>
+
+{% endblock %}

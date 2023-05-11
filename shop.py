@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, redirect, render_template, request, send_file, session, url_for
+from flask import Flask, flash, redirect, render_template, request, send_file, session, url_for
 from utils import create_pdf_from_2d_list
 # flask bootstrap
 import time
@@ -25,6 +25,37 @@ class ExpiryDateValidator:
             raise ValidationError(
                 'Invalid expiry date format. Please use MM/YY format.')
         current_date = datetime.now()
+
+
+class Admin(db.Model):
+    __tablename__ = 'admins'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+
+class AdminLoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()], render_kw={
+                           "type": "password"})
+    submit = SubmitField("Login")
+
+    def validate(self, extra_validators=None):
+        rv = FlaskForm.validate(self)
+        if not rv:
+            return False
+
+        if not authenticate(self.username.data, self.password.data):
+            self.password.errors.append('Invalid password')
+            # reset password field
+            self.password.data = ''
+            return False
+
+        return True
 
 
 class CheckoutForm(FlaskForm):
@@ -66,6 +97,15 @@ class CheckoutForm(FlaskForm):
         Regexp('^[0-9]*$', message='CVC must be numeric'),
         Length(min=3, max=3, message='CVC must be 3 digits long')
     ], render_kw={"placeholder": "e.g. 123"})
+    submit = SubmitField('Submit')
+
+
+class ItemForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired()])
+    image = StringField('Image', validators=[DataRequired()])
+    price = IntegerField('Price', validators=[DataRequired()])
+    airmiles = IntegerField('Airmiles', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
@@ -123,6 +163,44 @@ def index():
     selected_option = request.form.get('sort')
     items_sorted = sort(selected_option, Item.query.all())
     return render_template('index.html', items=items_sorted, selected_option=selected_option, basket_count=len(session.get('basket', [])))
+
+
+def authenticate(username, password):
+    admin = Admin.query.filter_by(username=username).first()
+    return (admin and admin.password == password)
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    form = AdminLoginForm()
+    if form.validate_on_submit():
+        session['username'] = form.username.data
+        session['password'] = form.password.data
+        # check if username and password match any in database admin table
+        if authenticate(form.username.data, form.password.data):
+            return redirect(url_for('admin_dashboard'))
+        else:
+            print('Incorrect username or password')
+    return render_template('admin.html', form=form)
+
+
+@app.route('/admin/dashboard', methods=['GET', 'POST'])
+def admin_dashboard():
+    try:
+        username = session['username']
+        password = session['password']
+    except KeyError:
+        return redirect(url_for('admin'))
+    if not authenticate(username, password):
+        return redirect(url_for('admin'))
+    form = ItemForm()
+    if form.validate_on_submit():
+        item = Item(name=form.name.data, description=form.description.data,
+                    image=form.image.data, price=form.price.data, airmiles=form.airmiles.data)
+        db.session.add(item)
+        db.session.commit()
+        flash('Item added successfully')
+    return render_template('admin_dashboard.html', form=form)
 
 
 @ app.route('/success', methods=['GET'])

@@ -25,10 +25,8 @@
   </head>
 
   <body>
-    <!-- nav bar brown -->
     <nav class="navbar navbar-dark">
       <a class="navbar-brand" href="{{ url_for('index') }}">s e p i a .</a>
-      <!-- inline list of links: home, about, basket using bootstrap css -->
       <ul class="nav">
         <li class="nav-item {% block shop_nav %}{% endblock %}">
           <a class="nav-link" href="{{ url_for('index') }}">shop</a>

@@ -13,27 +13,29 @@ h1 {
   padding: 0px 0px 4px 10px;
 }
 
-h2 {
-  font-size: 30pt;
+h2,
+h3,
+h4,
+h5 {
   font-weight: 700;
   color: #444;
+}
+
+h2 {
+  font-size: 30pt;
 }
 
 h3 {
   font-size: 20pt;
-  font-weight: 700;
-  color: #444;
 }
 
 h4 {
   font-size: 16pt;
-  font-weight: 700;
   color: #676767;
 }
 
 h5 {
   font-size: 14pt;
-  font-weight: 700;
   color: #676767;
 }
 
@@ -48,7 +50,7 @@ h5 {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   color: #444;
   grid-gap: 10px;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px;
 }
 
 .nav li.selected a {
@@ -72,7 +74,6 @@ h5 {
   background-color: #543a23;
   color: #fff;
   padding: 20px;
-  color: 0;
   margin-bottom: 20px;
 }
 
@@ -86,7 +87,7 @@ h5 {
   width: 100%;
   max-width: 1000px;
   margin: auto;
-  padding: 0 40 0 40;
+  padding: 0 40px;
 }
 
 .info {
@@ -152,7 +153,7 @@ img {
 .about {
   max-width: 1300px;
   margin: auto;
-  padding: 0 40 0 40;
+  padding: 0 40px;
 }
 
 .table {
@@ -186,8 +187,6 @@ button.itm-view {
 .itm-btns>.itm-view {
   margin-right: 10px;
   width: 100%;
-  /* display: flex; */
-  /* justify-content: space-between; */
 }
 
 .itm-btns {

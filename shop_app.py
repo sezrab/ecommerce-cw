@@ -1,18 +1,16 @@
 from datetime import datetime
 import os
-from flask import Flask, flash, redirect, render_template, request, send_file, session, url_for
-from utils import create_pdf_from_2d_list
-# flask bootstrap
 import time
+from flask import Flask, flash, redirect, render_template, request, send_file, session, url_for
 from flask_bootstrap import Bootstrap
-# flaskwtf form
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FloatField, ValidationError, FileField, IntegerField
 from wtforms.validators import Length, DataRequired, Email, Regexp, NumberRange
 from flask_sqlalchemy import SQLAlchemy
+from utils import create_pdf_from_2d_list
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = ['C1B6-1F3C-4F1A-8F9C']
+app.config['SECRET_KEY'] = 'C1B6-1F3C-4F1A-8F9C'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shopdb.sqlite3'
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
@@ -26,17 +24,6 @@ class ExpiryDateValidator:
             raise ValidationError(
                 'Invalid expiry date format. Please use MM/YY format.')
         current_date = datetime.now()
-
-
-class Admin(db.Model):
-    __tablename__ = 'admins'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
 
 
 class AdminLoginForm(FlaskForm):
@@ -98,10 +85,21 @@ class ItemForm(FlaskForm):
     # file upload
     image = FileField('Image', validators=[DataRequired()])
     price = FloatField('Price', validators=[
-                       DataRequired(), NumberRange(min=0), Regexp('^[0-9]*$', message='Price must be numeric')])
+                       DataRequired(), NumberRange(min=0)])
     airmiles = IntegerField('Airmiles', validators=[
-        DataRequired(), NumberRange(min=0), Regexp('^[0-9]*$', message='Airmiles must be numeric')])
+        DataRequired(), NumberRange(min=0)])
     submit = SubmitField('Submit')
+
+
+class Admin(db.Model):
+    __tablename__ = 'admins'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 
 class Item(db.Model):
@@ -167,7 +165,7 @@ def authenticate(username, password):
     return admin.password == password
 
 
-def delitem(item):
+def delete_item(item):
     db.session.delete(item)
     db.session.commit()
 
@@ -286,7 +284,7 @@ def delete():
             itmid = request.form.get('id')
             # get item with id
             item = Item.query.get(itmid)
-            delitem(item)
+            delete_item(item)
         except:
             pass
     return redirect(url_for('index'))
